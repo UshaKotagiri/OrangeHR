@@ -1,12 +1,17 @@
 package HR;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Helper extends Base{
 
@@ -47,31 +52,31 @@ public class Helper extends Base{
 		
 		driver.findElement(By.id("admin")).click();
 		driver.switchTo().frame("rightMenu");
-		driver.findElement(By.xpath("//input[@name=\"organization[name]\"]")).sendKeys("Org1");
 		
-		//driver.findElement(By.xpath("//form/div[@class=\"leftDiv\"]/input[@id=\"organization_name\"]")).sendKeys("Org1");
-		/*WebElement formele = driver.findElement(By.id("frmGenInfo"));
-		formele.findElement(By.id("organization_name")).sendKeys("Org1");*/
 		
-		driver.findElement(By.id("organization_taxId")).sendKeys("TaxId123");
-		driver.findElement(By.id("organization_phone")).sendKeys("12345678");
-		driver.findElement(By.id("organization_fax")).sendKeys("000123");
-		driver.findElement(By.id("organization_email")).sendKeys("email@gmail.com");
+		hidden("ORG123",driver.findElement(By.xpath("//input[@name=\"organization[name]\"]")));
+
+		hidden("taxID123",driver.findElement(By.xpath("//input[@name = \"organization[taxId]\"]")));
+		hidden("reg123",driver.findElement(By.id("organization_registraionNumber")));
+		hidden("12345",driver.findElement(By.id("organization_phone")));
+		hidden("000123",driver.findElement(By.id("organization_fax")));
+		hidden("employee@gmail.com",driver.findElement(By.id("organization_email")));
 		
+		
+	}
+	public void hidden(String txt, WebElement wb) {
+		
+		String s = "arguments[0].setAttribute('value','"+txt+"')";
+		JavascriptExecutor js2 = (JavascriptExecutor) driver;
+		
+		js2.executeScript(s, wb);
 	}
 	
 	public void leaveperiod() {
-		//driver.findElement(By.id("leave")).click();
+		
 		Actions action = new Actions(driver);
-		//action.moveToElement(driver.findElement(By.id("leave"))).moveToElement(driver.findElement(By.className("leaveperiod"))).click().build().perform();
 		WebElement main_menu = driver.findElement(By.id("leave"));
 		action.moveToElement(main_menu);
-		
-		/*WebElement mid_menu = driver.findElement(By.xpath("//*[@class=\"l2_link parent leavesummary\"]"));
-		action.moveToElement(mid_menu);
-		
-		WebElement sub_menu = driver.findElement(By.className("leaveperiod"));
-		action.moveToElement(sub_menu);*/
 		action.click().build().perform();
 		
 		driver.switchTo().frame("rightMenu");
@@ -82,44 +87,69 @@ public class Helper extends Base{
 	}
 	
 	public void admin_location() {
-		Actions action = new Actions(driver);
-		WebElement main_menu = driver.findElement(By.id("admin"));
-		action.moveToElement(main_menu).perform();
+
 		
-		WebElement mid_menu = driver.findElement(By.xpath("//*[@onclick=\"menuclicked(this);\"]"));
-		action.moveToElement(mid_menu).perform();
+		//mousehoover(driver.findElement(By.id("admin")), driver.findElement(By.xpath("//*[@onclick=\"menuclicked(this);\"]")), driver.findElement(By.xpath("//*[@href=\"./symfony/web/index.php/admin/viewLocations\"]")));
+		mousehoover("Admin","Organization", "Locations");
 		
-		WebElement sub_menu = driver.findElement(By.xpath("//*[@href=\"./symfony/web/index.php/admin/viewLocations\"]"));
-		//action.moveToElement(sub_menu);
-		
-		sub_menu.click();
-		
-		
-		//action.clickAndHold();
-		System.out.println("After click");
-		driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS) ;
 		driver.switchTo().frame("rightMenu");
-		
-		driver.findElement(By.id("searchLocation_name")).sendKeys("location1");
+		WebDriverWait wait=new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("searchLocation_name")));
+		hidden("location1",driver.findElement(By.id("searchLocation_name")));
+		hidden("city1",driver.findElement(By.id("searchLocation_city")));
+		dropbox(By.id("searchLocation_country"), "India");
+		//driver.findElement(By.id("searchLocation_name")).sendKeys("location1");
 	}
 	
 	public void PIM_Customfield() {
-		Actions action = new Actions(driver);
-		WebElement main_menu = driver.findElement(By.id("pim"));
-		action.moveToElement(main_menu).perform();
 		
-		WebElement mid_menu = driver.findElement(By.xpath("//li[@class=\"l2\"]//a[@class=\"l2_link parent configure\"]//span"));
-		action.moveToElement(mid_menu).perform();
 		
-		WebElement sub_menu = driver.findElement(By.xpath("//li[@class=\"l3\"]//a[@href=\"./symfony/web/index.php/pim/listCustomFields\"]//span"));
-		//action.moveToElement(sub_menu);
+		//mousehoover(driver.findElement(By.id("pim")), driver.findElement(By.xpath("//li[@class=\"l2\"]//a[@class=\"l2_link parent configure\"]//span")), driver.findElement(By.xpath("//li[@class=\"l3\"]//a[@href=\"./symfony/web/index.php/pim/listCustomFields\"]//span")));
+		driver.switchTo().frame("rightMenu");
+			
+		WebDriverWait wait=new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonAdd")));
+		driver.findElement(By.id("buttonAdd")).click();
 		
-		sub_menu.click();
-		//driver.switchTo().frame("rightMenu");
-		//driver.findElement(By.xpath("//form[@name=\"frmCustomField\"]//input[@id=\"customField_name\"]")).sendKeys("field12");
+		hidden("field1234",driver.findElement(By.xpath("//*[@name=\"customField[name]\"]")));
 		
-		//driver.findElement(By.id("customField_name")).sendKeys("Field12");
 		dropbox(By.id("customField_screen"), "Salary");
+		dropbox(By.id("customField_type"),"Text or Number");
+		
+		//driver.findElement(By.id("btnSave")).click();
 		
 	}
+	
+	public void mousehoover(String main_menu,String mid_menu,String sub_menu) {
+		
+		Actions action = new Actions(driver);
+		
+		WebElement m1 = searchList(By.xpath("//*[@class=\"l1\"]"), main_menu);
+		action.moveToElement(m1).build().perform();
+		
+		WebElement m2 = searchList(By.xpath("li[@class=\"l2\"]"), mid_menu);
+		action.moveToElement(m2).perform();
+		
+		WebElement m3 = searchList(By.xpath("//*[@id=\""+main_menu+"\"]//li[@class = \"l2\"]//li[@class = \"l3\"]"), sub_menu);
+		m3.click();
+		//action.moveToElement(mid_menu).perform();
+		
+		//sub_menu.click();
+	}
+	
+	public WebElement searchList(By path, String txt) {
+		System.out.println(txt);
+		List<WebElement> mm = driver.findElements(path);
+		for(WebElement menu:mm) {
+			System.out.println(menu.getText());
+			if(menu.getText().contains(txt)) {
+				
+				//WebElement m1 = driver.findElement(By.xpath(path+"[@id=\"+txt+"\"]"));
+				//action.moveToElement(m1).perform();
+				return menu;
+			}
+			
+	}
+		return null;
 }
+	}

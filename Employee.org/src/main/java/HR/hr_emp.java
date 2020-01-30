@@ -24,8 +24,8 @@ public class hr_emp {
 		//d.employeeInfo();
 		
 		//d.Admin_GeneralInfo();
-		d.leaveperiod();
-		//d.admin_location();
+		//d.leaveperiod();
+		d.admin_location();
 		//d.PIM_Customfield();
 	}
 
